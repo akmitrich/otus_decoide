@@ -12,7 +12,7 @@ enum encodings_e
 int main(int argc, const char *argv[])
 {
     FILE *input;
-    enum encodings_e encoding;
+    enum encodings_e encoding = CP1251;
     FILE *output;
 
     const char *program = argv[0];
@@ -30,11 +30,11 @@ int main(int argc, const char *argv[])
 
     if (argc > 2)
     {
-        if (strncmp(argv[2], "cp", 2) == 0 || strncmp(argv[2], "CP", 2))
+        if (strncmp(argv[2], "cp", 2) == 0 || strncmp(argv[2], "CP", 2) == 0)
             encoding = CP1251;
-        if (strncmp(argv[2], "koi", 3) == 0 || strncmp(argv[2], "KOI", 3))
+        if (strncmp(argv[2], "koi", 3) == 0 || strncmp(argv[2], "KOI", 3) == 0)
             encoding = KOI8R;
-        if (strncmp(argv[2], "iso", 3) == 0 || strncmp(argv[2], "ISO", 3))
+        if (strncmp(argv[2], "iso", 3) == 0 || strncmp(argv[2], "ISO", 3) == 0)
             encoding = ISO_8859_5;
     }
     else
