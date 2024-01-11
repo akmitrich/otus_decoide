@@ -58,6 +58,8 @@ int main(int argc, const char *argv[])
             printf("ERROR: cannot create output file.\n");
             goto close_input;
         }
+        const char *x = "\u2030";
+        fwrite(x, 1, strlen(x), output);
     }
     else
         output = NULL;
@@ -75,21 +77,21 @@ close_input:
 
 #define MAX_BUF_SIZE 1024
 
-uint16_t decode_byte(unsigned char c, enum encodings_e encoding)
+const char *decode_byte(unsigned char c, enum encodings_e encoding)
 {
     unsigned char a = c & 0x7f;
     if (a == c)
-        return 0;
+        return NULL;
     switch (encoding)
     {
     case CP1251:
-        return CP1251_TABLE[0];
+        return CP1251_TABLE[a];
     case KOI8R:
         return KOI8R_TABLE[0];
     case ISO_8859_5:
         return ISO_8859_5_TABLE[0];
     default:
-        return 0;
+        return NULL;
     }
 }
 
@@ -99,14 +101,20 @@ int run(FILE *input, enum encodings_e encoding, FILE *output)
     size_t n;
     if (output == NULL)
         output = stdout;
+    for (size_t i = 0; i < 128; ++i)
+    {
+        printf("%s", CP1251_TABLE[i]);
+        fwrite(CP1251_TABLE[i], 1, strlen(CP1251_TABLE[i]), output);
+    }
+    return 0;
     do
     {
         n = fread(buf, 1, MAX_BUF_SIZE, input);
         for (size_t i = 0; i < n; i++)
         {
-            uint16_t decoded = decode_byte(buf[i], encoding);
+            const char *decoded = decode_byte(buf[i], encoding);
             if (decoded)
-                fwrite(&decoded, sizeof(decoded), 1, output);
+                fwrite(decoded, 1, strlen(decoded), output);
             else
                 fwrite(&buf[i], 1, 1, output);
         }
